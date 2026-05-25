@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C from Scratch — 30-Year Dev's Roadmap</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2333;
+    --border: #30363d;
+    --accent: #00ff88;
+    --accent2: #00bfff;
+    --accent3: #ff6b35;
+    --accent4: #c4a87a;
+    --text: #e6edf3;
+    --muted: #7d8590;
+    --danger: #ff4757;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ─────────────────────────────── */
+  header {
+    padding: 60px 40px 40px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: -60px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(0,255,136,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; right: -40px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(0,191,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .header-label {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 8vw, 100px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    color: var(--text);
+  }
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    margin-top: 20px;
+    color: var(--muted);
+    font-size: 13px;
+    max-width: 600px;
+  }
+  .subtitle strong { color: var(--accent4); }
+
+  /* ── LAYOUT ──────────────────────────────── */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px;
+  }
+
+  section {
+    margin-bottom: 70px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 30px;
+  }
+
+  .section-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--border);
+    line-height: 1;
+    min-width: 50px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: var(--text);
+  }
+  .section-title span { color: var(--accent2); }
+
+  /* ── PHILOSOPHY BLOCK ────────────────────── */
+  .philosophy {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 28px 32px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.9;
+  }
+  .philosophy strong { color: var(--accent4); font-size: 14px; }
+
+  /* ── PHASE CARDS ─────────────────────────── */
+  .phases {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .phase-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px;
+    position: relative;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: default;
+  }
+  .phase-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .phase-tag {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .phase-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+
+  .phase-items {
+    list-style: none;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .phase-items li {
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(48,54,61,0.5);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .phase-items li::before {
+    content: '→';
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .phase-duration {
+    position: absolute;
+    top: 20px; right: 20px;
+    font-size: 10px;
+    color: var(--accent3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ── FLOWCHART ───────────────────────────── */
+  .flowchart-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 40px;
+    overflow-x: auto;
+  }
+
+  .flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    min-width: 600px;
+  }
+
+  .flow-node {
+    padding: 12px 28px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-align: center;
+    text-transform: uppercase;
+    position: relative;
+  }
+
+  .node-start, .node-end {
+    background: var(--accent);
+    color: #000;
+    border-radius: 999px;
+    padding: 10px 36px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 3px;
+  }
+  .node-end { background: var(--accent3); }
+
+  .node-process {
+    background: var(--surface2);
+    border: 1px solid var(--accent2);
+    color: var(--accent2);
+    min-width: 240px;
+  }
+
+  .node-decision {
+    background: var(--surface2);
+    border: 1px solid var(--accent4);
+    color: var(--accent4);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    padding: 24px 48px;
+    min-width: 220px;
+    font-size: 11px;
+  }
+
+  .flow-arrow {
+    width: 2px;
+    height: 28px;
+    background: var(--border);
+    position: relative;
+  }
+  .flow-arrow::after {
+    content: '▼';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--muted);
+    font-size: 10px;
+  }
+
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .flow-branch {
+    display: flex;
+    align-items: flex-start;
+    gap: 60px;
+  }
+
+  .flow-branch-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .branch-label {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 0;
+  }
+
+  /* ── PSEUDO CODE ─────────────────────────── */
+  .pseudo-block {
+    background: #0a0f15;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .pseudo-header {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 20px;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .pseudo-header span { color: var(--accent4); }
+
+  .pseudo-code {
+    padding: 24px 28px;
+    font-size: 13px;
+    line-height: 2;
+    color: #abb2bf;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  .kw   { color: #c678dd; }
+  .fn   { color: #61afef; }
+  .str  { color: #98c379; }
+  .num  { color: #d19a66; }
+  .cmt  { color: #5c6370; font-style: italic; }
+  .type { color: #e5c07b; }
+  .sym  { color: var(--accent); }
+
+  /* ── NVIM SECTION ────────────────────────── */
+  .nvim-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  @media (max-width: 700px) { .nvim-grid { grid-template-columns: 1fr; } }
+
+  .nvim-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .nvim-card-header {
+    background: var(--surface2);
+    padding: 12px 20px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--accent2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nvim-card-body {
+    padding: 20px;
+  }
+
+  .keybind-list {
+    list-style: none;
+    font-size: 12px;
+  }
+  .keybind-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(48,54,61,0.4);
+    color: var(--muted);
+  }
+  .keybind-list li:last-child { border-bottom: none; }
+  .keybind-list kbd {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 2px 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent4);
+  }
+
+  /* ── DAILY RITUAL ────────────────────────── */
+  .ritual-timeline {
+    position: relative;
+    padding-left: 32px;
+  }
+  .ritual-timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+  }
+
+  .ritual-item {
+    position: relative;
+    margin-bottom: 28px;
+  }
+  .ritual-item::before {
+    content: '';
+    position: absolute;
+    left: -29px; top: 6px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  .ritual-time {
+    font-size: 10px;
+    color: var(--accent3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .ritual-task {
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .ritual-desc {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* ── MENTAL MODEL ────────────────────────── */
+  .mental-model {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  @media (max-width: 700px) {
+    .mental-model { grid-template-columns: 1fr; }
+  }
+
+  .mm-cell {
+    background: var(--surface);
+    padding: 24px;
+  }
+
+  .mm-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  .mm-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 1px;
+    color: var(--accent2);
+    margin-bottom: 8px;
+  }
+
+  .mm-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  /* ── WARNING BOX ──────────────────────────── */
+  .warning {
+    background: rgba(255, 71, 87, 0.06);
+    border: 1px solid rgba(255, 71, 87, 0.3);
+    border-left: 3px solid var(--danger);
+    padding: 20px 24px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 20px;
+  }
+  .warning strong { color: var(--danger); font-size: 13px; }
+
+  /* ── FOOTER ───────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 30px 40px;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  footer strong { color: var(--accent4); }
+
+  /* ── DIVIDER ──────────────────────────────── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, var(--accent), transparent);
+    margin-bottom: 40px;
+    opacity: 0.3;
+  }
+
+  /* animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  section { animation: fadeUp 0.5s ease both; }
+  section:nth-child(2) { animation-delay: 0.05s; }
+  section:nth-child(3) { animation-delay: 0.10s; }
+  section:nth-child(4) { animation-delay: 0.15s; }
+  section:nth-child(5) { animation-delay: 0.20s; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-label">// 30-year veteran · starting from zero · the right way</div>
+  <h1>Learning <span>C</span><br>From Scratch</h1>
+  <p class="subtitle">
+    A battle-tested roadmap: <strong>mental models first</strong>, flowcharts & pseudocode always,
+    and Neovim as your forge. No shortcuts. No tutorials. Just <strong>craft</strong>.
+  </p>
+</header>
+
+<main>
+
+  <!-- PHILOSOPHY ─────────────────────────── -->
+  <section>
+    <div class="section-header">
+      <div class="section-num">00</div>
+      <div class="section-title">The <span>Philosophy</span></div>
+    </div>
+    <div class="philosophy">
+      <strong>Why C still matters after 30 years.</strong><br><br>
+      Every language I've worked in — from assembler at embedded shops, to C++ at game studios,
+      to Rust at systems startups — everything reduces to C's mental model. Memory is a flat array.
+      A pointer is just a number. The CPU doesn't know about objects. <br><br>
+      My rule: <strong>never touch the keyboard until I can draw what the program does on paper.</strong>
+      Flowchart first. Pseudocode second. Code third. This isn't slow — it's 10× faster because
+      you debug on paper where it costs nothing, not in the terminal where it costs hours.<br><br>
+      And you'll live in <strong>Neovim</strong>. Not because it's cool, but because when you control
+      your editor at the muscle-memory level, your thinking and typing become one motion.
+    </div>
+  </section>
+
+  <!-- PHASES ─────────────────────────────── -->
+  <section>
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <div class="section-title">The <span>Phases</span></div>
+    </div>
+    <div class="phases">
+
+      <div class="phase-card">
+        <div class="phase-tag">Phase I</div>
+        <div class="phase-name">The Machine</div>
+        <div class="phase-duration">2–3 Weeks</div>
+        <ul class="phase-items">
+          <li>What a CPU actually does (fetch-decode-execute)</li>
+          <li>Memory: stack vs heap vs data vs code segments</li>
+          <li>Bits, bytes, binary, hex — no calculator</li>
+          <li>What a compiler actually produces</li>
+          <li>Your first <code>gcc -S</code> — read the assembly</li>
+        </ul>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-tag">Phase II</div>
+        <div class="phase-name">C Syntax & Control</div>
+        <div class="phase-duration">3–4 Weeks</div>
+        <ul class="phase-items">
+          <li>Types, variables, operators — all of them</li>
+          <li>if/else, switch — flowchart every branch</li>
+          <li>while, for, do-while — loop invariants</li>
+          <li>Functions: the stack frame model</li>
+          <li>Scope, lifetime, storage classes</li>
+        </ul>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-tag">Phase III</div>
+        <div class="phase-name">Pointers & Memory</div>
+        <div class="phase-duration">4–6 Weeks</div>
+        <ul class="phase-items">
+          <li>Pointer arithmetic — draw every step</li>
+          <li>Arrays as pointers — the decay rule</li>
+          <li>malloc / calloc / realloc / free</li>
+          <li>Double pointers, pointer-to-function</li>
+          <li>valgrind — zero leaks, zero UB</li>
+        </ul>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-tag">Phase IV</div>
+        <div class="phase-name">Structs & Data</div>
+        <div class="phase-duration">3–4 Weeks</div>
+        <ul class="phase-items">
+          <li>struct padding & alignment — know the bytes</li>
+          <li>Linked lists, stacks, queues from scratch</li>
+          <li>Binary trees, BST operations</li>
+          <li>File I/O: fopen, fread, fwrite, fclose</li>
+          <li>Bitfields and unions</li>
+        </ul>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-tag">Phase V</div>
+        <div class="phase-name">The Toolchain</div>
+        <div class="phase-duration">2–3 Weeks</div>
+        <ul class="phase-items">
+          <li>gcc / clang flags: -Wall -Wextra -fsanitize</li>
+          <li>Make & Makefiles — dependency graphs</li>
+          <li>gdb / codelldb: breakpoints, watch, backtrace</li>
+          <li>Header files, multiple .c files, linking</li>
+          <li>Static & shared libraries (.a / .so)</li>
+        </ul>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-tag">Phase VI</div>
+        <div class="phase-name">Real Projects</div>
+        <div class="phase-duration">Ongoing</div>
+        <ul class="phase-items">
+          <li>Shell in C (fork, exec, pipe, wait)</li>
+          <li>HTTP server from raw sockets</li>
+          <li>Memory allocator (implement malloc)</li>
+          <li>Read K&R — every exercise</li>
+          <li>Read a real codebase (Redis, SQLite)</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- FLOWCHART ──────────────────────────── -->
+  <section>
+    <div class="section-header">
+      <div class="section-num">02</div>
+      <div class="section-title">Flowchart <span>Methodology</span></div>
+    </div>
+
+    <p style="font-size:13px; color:var(--muted); margin-bottom:28px;">
+      Example: approaching any new C concept (e.g. learning pointers, or writing any function).
+      This is the thinking loop I run every time.
+    </p>
+
+    <div class="flowchart-wrap">
+      <div class="flow">
+
+        <div class="flow-node node-start">START</div>
+        <div class="flow-arrow"></div>
+
+        <div class="flow-node node-process">Read the concept (book / man page)</div>
+        <div class="flow-arrow"></div>
+
+        <div class="flow-node node-process">Draw memory layout on paper (boxes + arrows)</div>
+        <div class="flow-arrow"></div>
+
+        <div class="flow-node node-decision">Can I explain it<br>without looking?</div>
+        <div class="flow-arrow"></div>
+
+        <!-- branch -->
+        <div class="flow-branch">
+          <div class="flow-branch-col">
+            <div class="branch-label" style="color:var(--danger)">NO</div>
+            <div class="flow-node node-process" style="border-color:var(--danger);color:var(--danger);font-size:11px;">Re-read. Draw again.<br>Find a smaller example.</div>
+            <div style="width:1px;height:40px;background:var(--border);margin:0 auto;"></div>
+          </div>
+          <div class="flow-branch-col">
+            <div class="branch-label" style="color:var(--accent)">YES</div>
+            <div class="flow-node node-process">Write pseudocode on paper</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node node-process">Type it in Neovim</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node node-process">Compile: gcc -Wall -Wextra -g</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node node-decision">Errors?</div>
+            <div class="flow-arrow"></div>
+          </div>
+        </div>
+
+        <!-- merge back -->
+        <div class="flow-branch">
+          <div class="flow-branch-col">
+            <div class="branch-label" style="color:var(--danger)">YES</div>
+            <div class="flow-node node-process" style="border-color:var(--danger);color:var(--danger);font-size:11px;">Read error message fully.<br>Fix ONE error at a time.</div>
+            <div style="width:1px;height:30px;background:var(--border);margin:0 auto;"></div>
+          </div>
+          <div class="flow-branch-col">
+            <div class="branch-label" style="color:var(--accent)">NO</div>
+            <div class="flow-node node-process">Run + test with edge cases</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node node-process">valgrind / ASan — zero leaks?</div>
+            <div class="flow-arrow"></div>
+            <div class="flow-node node-process">Write the next concept</div>
+            <div class="flow-arrow"></div>
+          </div>
+        </div>
+
+        <div class="flow-node node-end">REPEAT</div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- PSEUDOCODE ──────────────────────────── -->
+  <section>
+    <div class="section-header">
+      <div class="section-num">03</div>
+      <div class="section-title">Pseudocode <span>Examples</span></div>
+    </div>
+
+    <!-- Example 1 -->
+    <div class="pseudo-block" style="margin-bottom:20px;">
+      <div class="pseudo-header">
+        <span>EXAMPLE 1</span> — Pointer + Loop (the mental model)
+      </div>
+      <div class="pseudo-code"><span class="cmt">// PSEUDOCODE — before writing a single line of C</span>
+<span class="cmt">// Goal: sum all elements of an array using a pointer</span>
+
+<span class="kw">DEFINE</span> array <span class="sym">[</span><span class="num">5</span><span class="sym">]</span> = <span class="sym">{</span><span class="num">10, 20, 30, 40, 50</span><span class="sym">}</span>
+<span class="kw">DEFINE</span> ptr   → points to array<span class="sym">[</span><span class="num">0</span><span class="sym">]</span>
+<span class="kw">DEFINE</span> sum   = <span class="num">0</span>
+<span class="kw">DEFINE</span> i     = <span class="num">0</span>
+
+<span class="kw">WHILE</span> i < <span class="num">5</span>:
+    sum = sum + VALUE_AT(ptr)   <span class="cmt">// dereference: *ptr</span>
+    ADVANCE ptr by 1 element    <span class="cmt">// ptr++ moves sizeof(int) bytes</span>
+    i = i + <span class="num">1</span>
+<span class="kw">END WHILE</span>
+
+<span class="kw">PRINT</span> sum
+
+<span class="cmt">/*
+  Memory picture (draw this on paper first):
+  
+  addr:  0x100  0x104  0x108  0x10C  0x110
+  value:  10     20     30     40     50
+          ^
+          ptr starts here, walks right
+*/</span></div>
+    </div>
+
+    <!-- Example 2 -->
+    <div class="pseudo-block" style="margin-bottom:20px;">
+      <div class="pseudo-header">
+        <span>EXAMPLE 2</span> — Dynamic memory + struct
+      </div>
+      <div class="pseudo-code"><span class="cmt">// PSEUDOCODE — linked list node insertion</span>
+
+<span class="kw">STRUCT</span> <span class="type">Node</span>:
+    data  : <span class="type">int</span>
+    next  : <span class="type">pointer to Node</span>
+
+<span class="kw">FUNCTION</span> <span class="fn">insert_front</span>(head, value):
+    <span class="cmt">// Ask OS for memory for one Node</span>
+    new_node = <span class="fn">ALLOCATE</span>(<span class="kw">sizeof</span> Node)
+    <span class="kw">IF</span> new_node == NULL:
+        <span class="fn">ABORT</span>(<span class="str">"out of memory"</span>)
+    
+    new_node.data = value
+    new_node.next = head        <span class="cmt">// new node points to old head</span>
+    head          = new_node    <span class="cmt">// head now points to new node</span>
+    <span class="kw">RETURN</span> head
+
+<span class="kw">FUNCTION</span> <span class="fn">free_list</span>(head):
+    <span class="kw">WHILE</span> head != NULL:
+        tmp  = head.next
+        <span class="fn">FREE</span>(head)              <span class="cmt">// always free before losing pointer</span>
+        head = tmp
+    <span class="kw">END WHILE</span>
+
+<span class="cmt">// RULE: every malloc must pair with exactly one free.</span></div>
+    </div>
+
+    <!-- Example 3 -->
+    <div class="pseudo-block">
+      <div class="pseudo-header">
+        <span>EXAMPLE 3</span> — The mental model for a C program's life
+      </div>
+      <div class="pseudo-code"><span class="cmt">// What actually happens when you run ./program</span>
+
+OS <span class="fn">LOADS</span> binary into memory:
+    .text   segment → your compiled instructions (read-only)
+    .data   segment → initialized globals
+    .bss    segment → zero-initialized globals
+    stack   → grows DOWN from high address (local vars, return addrs)
+    heap    → grows UP from low address (malloc land)
+
+<span class="fn">CALL</span> _start  (C runtime, not main)
+    → zero out .bss
+    → set up argc, argv
+    → <span class="fn">CALL</span> main()
+
+<span class="kw">INSIDE</span> main():
+    <span class="kw">EACH</span> function call:
+        push return address onto stack
+        push local variables onto stack
+        execute body
+        pop frame → locals are GONE
+
+    <span class="kw">EACH</span> malloc():
+        kernel finds free heap page
+        returns pointer (just a number)
+        YOU are responsible for free()
+
+    <span class="kw">RETURN</span> from main → OS reclaims everything
+    <span class="cmt">// But forgetting free() is still a bug — train the habit</span></div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- NEOVIM ─────────────────────────────── -->
+  <section>
+    <div class="section-header">
+      <div class="section-num">04</div>
+      <div class="section-title">Neovim <span>Setup</span> for C</div>
+    </div>
+
+    <div class="nvim-grid">
+
+      <div class="nvim-card">
+        <div class="nvim-card-header">Essential Plugins (lazy.nvim)</div>
+        <div class="nvim-card-body">
+          <ul class="keybind-list">
+            <li><span>clangd LSP</span> <kbd>mason.nvim</kbd></li>
+            <li><span>Syntax + AST</span> <kbd>nvim-treesitter</kbd></li>
+            <li><span>Completion</span> <kbd>nvim-cmp + cmp-nvim-lsp</kbd></li>
+            <li><span>Debugger</span> <kbd>nvim-dap + codelldb</kbd></li>
+            <li><span>DAP UI</span> <kbd>nvim-dap-ui</kbd></li>
+            <li><span>Diagnostics</span> <kbd>trouble.nvim</kbd></li>
+            <li><span>Fuzzy find</span> <kbd>telescope.nvim</kbd></li>
+            <li><span>File tree</span> <kbd>nvim-tree</kbd></li>
+            <li><span>Format on save</span> <kbd>clang-format</kbd></li>
+            <li><span>Git blame</span> <kbd>gitsigns.nvim</kbd></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nvim-card">
+        <div class="nvim-card-header">Key Bindings for C Workflow</div>
+        <div class="nvim-card-body">
+          <ul class="keybind-list">
+            <li><span>Go to definition</span> <kbd>gd</kbd></li>
+            <li><span>Hover docs</span> <kbd>K</kbd></li>
+            <li><span>Find references</span> <kbd>&lt;leader&gt;fr</kbd></li>
+            <li><span>Rename symbol</span> <kbd>&lt;leader&gt;rn</kbd></li>
+            <li><span>Code action</span> <kbd>&lt;leader&gt;ca</kbd></li>
+            <li><span>Toggle DAP UI</span> <kbd>&lt;leader&gt;du</kbd></li>
+            <li><span>Set breakpoint</span> <kbd>&lt;leader&gt;db</kbd></li>
+            <li><span>Step over</span> <kbd>&lt;F10&gt;</kbd></li>
+            <li><span>Step into</span> <kbd>&lt;F11&gt;</kbd></li>
+            <li><span>Build & Run</span> <kbd>&lt;leader&gt;rr</kbd></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nvim-card">
+        <div class="nvim-card-header">compile_commands.json (clangd needs this)</div>
+        <div class="nvim-card-body">
+          <div class="pseudo-code" style="padding:0;font-size:11px;line-height:1.9;">
+<span class="cmt"># Option 1: bear (wrap your make)</span>
+<span class="fn">bear</span> -- make
+
+<span class="cmt"># Option 2: cmake projects</span>
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON .
+
+<span class="cmt"># Option 3: single file .clangd</span>
+<span class="kw">CompileFlags</span>:
+  Add: [<span class="str">-Wall</span>, <span class="str">-Wextra</span>, <span class="str">-std=c11</span>]
+          </div>
+        </div>
+      </div>
+
+      <div class="nvim-card">
+        <div class="nvim-card-header">Build Mapping in init.lua</div>
+        <div class="nvim-card-body">
+          <div class="pseudo-code" style="padding:0;font-size:11px;line-height:1.9;">
+<span class="cmt">-- &lt;leader&gt;rr to compile and run</span>
+vim.keymap.set(<span class="str">'n'</span>, <span class="str">'&lt;leader&gt;rr'</span>, <span class="kw">function</span>()
+  <span class="kw">local</span> file = vim.fn.expand(<span class="str">'%'</span>)
+  <span class="kw">local</span> out  = vim.fn.expand(<span class="str">'%:r'</span>)
+  vim.cmd(<span class="str">'!'</span> .. <span class="str">'gcc -Wall -Wextra -g '</span>
+    .. file .. <span class="str">' -o '</span> .. out
+    .. <span class="str">' && ./'</span> .. out)
+<span class="kw">end</span>, { desc = <span class="str">'Build & Run C'</span> })
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="warning">
+      <strong>⚠ Do not install 15 plugins on day one.</strong><br>
+      Start with clangd + treesitter only. Add plugins when you feel actual friction —
+      not because a YouTube video told you to. The plugin that solves a real problem
+      becomes muscle memory instantly. Plugins installed "because best practice" become noise.
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- DAILY RITUAL ───────────────────────── -->
+  <section>
+    <div class="section-header">
+      <div class="section-num">05</div>
+      <div class="section-title">Daily <span>Ritual</span></div>
+    </div>
+
+    <div class="ritual-timeline">
+
+      <div class="ritual-item">
+        <div class="ritual-time">Session Start · 15 min</div>
+        <div class="ritual-task">Paper + Pen First</div>
+        <div class="ritual-desc">Write today's concept in one sentence. Draw the memory layout. Write pseudocode. Only then open Neovim.</div>
+      </div>
+
+      <div class="ritual-item">
+        <div class="ritual-time">Core Block · 60–90 min</div>
+        <div class="ritual-task">Implement One Thing Completely</div>
+        <div class="ritual-desc">Not three half-finished things. One function, one data structure, one concept — compiled, tested, zero warnings, zero leaks.</div>
+      </div>
+
+      <div class="ritual-item">
+        <div class="ritual-time">Break · 10 min</div>
+        <div class="ritual-task">Walk. No screens.</div>
+        <div class="ritual-desc">Your brain consolidates while you move. Non-negotiable. The solution to 80% of bugs comes on the walk.</div>
+      </div>
+
+      <div class="ritual-item">
+        <div class="ritual-time">Review · 15 min</div>
+        <div class="ritual-task">Read Your Code Aloud</div>
+        <div class="ritual-desc">If you can't explain every line out loud — pointer arithmetic, the why of each cast — you don't understand it yet. Rewrite until you can.</div>
+      </div>
+
+      <div class="ritual-item">
+        <div class="ritual-time">End of Day · 10 min</div>
+        <div class="ritual-task">Write One Insight</div>
+        <div class="ritual-desc">One thing learned, one mistake made, one question to answer tomorrow. A text file in your repo. Build a lab notebook habit early.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- MENTAL MODELS ──────────────────────── -->
+  <section>
+    <div class="section-header">
+      <div class="section-num">06</div>
+      <div class="section-title">Core <span>Mental Models</span></div>
+    </div>
+
+    <div class="mental-model">
+
+      <div class="mm-cell">
+        <div class="mm-icon">🧠</div>
+        <div class="mm-title">Memory Is A Tape</div>
+        <div class="mm-desc">RAM is one giant byte array. Every variable, every pointer, every function lives at a numeric address. There is no magic — only addresses and values at those addresses.</div>
+      </div>
+
+      <div class="mm-cell">
+        <div class="mm-icon">📦</div>
+        <div class="mm-title">Types Are Lenses</div>
+        <div class="mm-desc">The same 4 bytes can be an int, a float, or a pointer. The type tells the compiler how to interpret the bits. Cast recklessly, get chaos. Cast intentionally, get power.</div>
+      </div>
+
+      <div class="mm-cell">
+        <div class="mm-icon">📍</div>
+        <div class="mm-title">Pointers Are Addresses</div>
+        <div class="mm-desc">A pointer is just a number — the address of something in memory. Pointer arithmetic is just integer arithmetic in units of sizeof(type). Draw it every time.</div>
+      </div>
+
+      <div class="mm-cell">
+        <div class="mm-icon">📚</div>
+        <div class="mm-title">Stack Frames Are LIFO</div>
+        <div class="mm-desc">Every function call pushes a frame onto the stack. Local variables live there. When the function returns, the frame is gone. Never return a pointer to a local variable.</div>
+      </div>
+
+      <div class="mm-cell">
+        <div class="mm-icon">⚙️</div>
+        <div class="mm-title">Undefined Behavior Is Real</div>
+        <div class="mm-desc">UB isn't "might work on this machine." It means the compiler can assume it never happens and optimize accordingly — deleting the very code you relied on. Use -fsanitize=address,undefined always.</div>
+      </div>
+
+      <div class="mm-cell">
+        <div class="mm-icon">🔗</div>
+        <div class="mm-title">Ownership Is Yours</div>
+        <div class="mm-desc">C has no GC. Every malloc is a contract: you own this memory, you will free it, exactly once, after its last use. Track ownership explicitly — in comments if needed.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- RESOURCES ──────────────────────────── -->
+  <section>
+    <div class="section-header">
+      <div class="section-num">07</div>
+      <div class="section-title">The <span>Stack</span></div>
+    </div>
+
+    <div class="phases">
+
+      <div class="phase-card">
+        <div class="phase-tag">Books</div>
+        <div class="phase-name">Read These</div>
+        <ul class="phase-items">
+          <li><strong>K&R C</strong> — The Bible. Do every exercise.</li>
+          <li><strong>Computer Systems: A Programmer's Perspective</strong> — how the machine works</li>
+          <li><strong>Modern C</strong> by Jens Gustedt — free PDF, rigorous</li>
+          <li><strong>Expert C Programming</strong> by Van der Linden — traps & pitfalls</li>
+        </ul>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-tag">Tools</div>
+        <div class="phase-name">Daily Drivers</div>
+        <ul class="phase-items">
+          <li>gcc / clang — compile with ALL warnings</li>
+          <li>valgrind — memory errors</li>
+          <li>AddressSanitizer (-fsanitize=address)</li>
+          <li>UBSan (-fsanitize=undefined)</li>
+          <li>gdb / codelldb in nvim-dap</li>
+          <li>clang-format — auto formatting</li>
+        </ul>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-tag">Practice</div>
+        <div class="phase-name">Build These</div>
+        <ul class="phase-items">
+          <li>A linked list, stack, queue, hash table from scratch</li>
+          <li>cat, wc, grep — reimplementations</li>
+          <li>A small shell (fork/exec/pipe)</li>
+          <li>A malloc implementation</li>
+          <li>Read the SQLite or Redis source</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <strong>// The truth about C:</strong> it will humiliate you. A segfault at 2am over a missing &amp; is a rite of passage.
+  That humiliation is the tuition. Pay it gladly — it makes everything else easy.
+</footer>
+
+</body>
+</html>

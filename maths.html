@@ -1,0 +1,1088 @@
+< index, hash lookup</td></tr>
+          <tr><td>O(log n)</td><td>Logarithmic</td><td>Binary search, BST ops</td></tr>
+          <tr><td>O(n)</td><td>Linear</td><td>Linear scan, strcmp</td></tr>
+          <tr><td>O(n log n)</td><td>Linearithmic</td><td>Merge sort, heapsort</td></tr>
+          <tr><td>O(n²)</td><td>Quadratic</td><td>Bubble sort, nested loops</td></tr>
+          <tr><td>O(2ⁿ)</td><td>Exponential</td><td>Brute-force subset search</td></tr>
+          <tr><td>O(n!)</td><td>Factorial</td><td>Permutation enumeration</td></tr>
+        </table>
+        <div class="aside">
+          <strong>Rule of thumb:</strong> if n = 10⁶, you can afford O(n log n) ≈ 20M ops. 
+          O(n²) = 10¹² ops — that's 10 minutes on a modern CPU.
+        </div>
+      </div>
+    </div>
+
+    <div class="card sage">
+      <div class="card-title">Powers of 2 — Memorise These</div>
+      <div class="card-where"><span class="tag sage">C</span> memory sizing, buffer allocations</div>
+      <div class="card-body">
+        <table class="math-table">
+          <tr><th>2ⁿ</th><th>Value</th><th>Meaning</th></tr>
+          <tr><td>2⁸</td><td>256</td><td>uint8_t range</td></tr>
+          <tr><td>2¹⁰</td><td>1,024</td><td>1 KB</td></tr>
+          <tr><td>2¹⁶</td><td>65,536</td><td>uint16_t range</td></tr>
+          <tr><td>2²⁰</td><td>1,048,576</td><td>1 MB</td></tr>
+          <tr><td>2³¹</td><td>2,147,483,648</td><td>INT_MAX + 1</td></tr>
+          <tr><td>2³²</td><td>4,294,967,296</td><td>uint32_t range</td></tr>
+          <tr><td>2⁶⁴</td><td>≈ 1.8 × 10¹⁹</td><td>uint64_t range</td></tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CHAPTER 4: BOOLEAN & LOGIC -->
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter">
+  <div class="chapter-label">Chapter IV</div>
+  <div class="chapter-title">Boolean <span>Algebra</span> & Logic</div>
+  <p class="chapter-intro">Every conditional in your code is Boolean algebra. Every CPU is built from logic gates. Understanding this bridges your code and the hardware it runs on.</p>
+
+  <div class="topic-grid">
+
+    <div class="card">
+      <div class="card-title">Truth Tables & Logic Gates</div>
+      <div class="card-where"><span class="tag">C</span> conditionals, bitwise, circuits</div>
+      <div class="card-body">
+        <table class="math-table">
+          <tr><th>A</th><th>B</th><th>A AND B</th><th>A OR B</th><th>A XOR B</th><th>NOT A</th></tr>
+          <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+          <tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td></tr>
+          <tr><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+          <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td></tr>
+        </table>
+        <div class="formula">
+          <span class="label">De Morgan's Laws — essential for simplifying conditionals:</span>
+          NOT(A AND B) = (NOT A) OR  (NOT B)
+          NOT(A OR  B) = (NOT A) AND (NOT B)
+        </div>
+        <div class="codeblock"><span class="cmt">// !(a && b) == (!a || !b)  ← De Morgan in C</span>
+<span class="cmt">// Useful when negating complex conditions</span>
+<span class="kw">if</span> (!(x <span class="op">></span> <span class="num">0</span> <span class="op">&&</span> y <span class="op">></span> <span class="num">0</span>))
+<span class="cmt">// same as:</span>
+<span class="kw">if</span> (x <span class="op">&lt;=</span> <span class="num">0</span> <span class="op">||</span> y <span class="op">&lt;=</span> <span class="num">0</span>)</div>
+      </div>
+    </div>
+
+    <div class="card rust">
+      <div class="card-title">Short-Circuit Evaluation</div>
+      <div class="card-where"><span class="tag rust">C</span> &&, || — order matters</div>
+      <div class="card-body">
+        In C, <code style="font-family:monospace;color:var(--rust)">&&</code> and <code style="font-family:monospace;color:var(--rust)">||</code> short-circuit — the right side may not be evaluated.
+        <div class="formula">
+          <span class="label">A && B: if A is false, B is never evaluated</span>
+          <span class="label">A || B: if A is true,  B is never evaluated</span>
+        </div>
+        <div class="codeblock"><span class="cmt">// Safe null check — ptr && is evaluated first</span>
+<span class="kw">if</span> (ptr <span class="op">!=</span> <span class="kw">NULL</span> <span class="op">&&</span> ptr<span class="op">-></span>value <span class="op">></span> <span class="num">0</span>) { }
+
+<span class="cmt">// If ptr is NULL, ptr->value never runs</span>
+<span class="cmt">// This is the mathematical guarantee of &&</span></div>
+        This is not just a language feature — it is a consequence of the mathematical definition of AND.
+      </div>
+    </div>
+
+    <div class="card slate">
+      <div class="card-title">Karnaugh Maps (K-Maps)</div>
+      <div class="card-where"><span class="tag slate">Logic</span> simplifying conditions</div>
+      <div class="card-body">
+        K-maps let you find the simplest Boolean expression for a truth table. Used in hardware design and complex conditional simplification.
+        <div class="diagram">  AB
+  00  01  11  10
+0 | 1 | 0 | 1 | 1 |   ← C=0
+1 | 0 | 1 | 1 | 0 |   ← C=1
+
+Group the 1s into rectangles (size = power of 2).
+Each rectangle → one AND term.
+Result = OR of all rectangles.</div>
+        <div class="aside">In code: if you have 4+ nested conditions, draw the truth table and simplify with a K-map before writing the if-else.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CHAPTER 5: LINEAR ALGEBRA -->
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter">
+  <div class="chapter-label">Chapter V</div>
+  <div class="chapter-title">Linear Algebra for <span>3D & Graphics</span></div>
+  <p class="chapter-intro">As a 3D artist working in Blender and building product visualisations, this is the mathematics living inside every transform, camera, and shader. Knowing it lets you write your own renderers and understand exactly what Blender is computing.</p>
+
+  <div class="topic-grid">
+
+    <div class="card">
+      <div class="card-title">Vectors</div>
+      <div class="card-where"><span class="tag gold">3D</span> positions, directions, normals</div>
+      <div class="card-body">
+        A vector is a magnitude and direction. In 3D, a point in space is just a vector from the origin.
+        <div class="formula">
+          <span class="label">Basic operations:</span>
+          v = (x, y, z)
+          |v| = √(x² + y² + z²)        ← magnitude (length)
+          v̂ = v / |v|                    ← unit vector (normalise)
+          a · b = axbx + ayby + azbz     ← dot product (scalar)
+          a × b = (matrix det)           ← cross product (vector, ⊥ to both)
+        </div>
+        <div class="codeblock"><span class="type">typedef struct</span> { <span class="type">float</span> x,y,z; } <span class="type">Vec3</span>;
+
+<span class="type">float</span> <span class="fn">dot</span>(<span class="type">Vec3</span> a, <span class="type">Vec3</span> b) {
+  <span class="kw">return</span> a.x*b.x + a.y*b.y + a.z*b.z;
+}
+<span class="cmt">// dot == 0 → perpendicular</span>
+<span class="cmt">// dot == |a||b| → parallel, same dir</span>
+<span class="cmt">// dot == -|a||b| → antiparallel</span></div>
+      </div>
+    </div>
+
+    <div class="card rust">
+      <div class="card-title">Matrices & Transforms</div>
+      <div class="card-where"><span class="tag rust">3D</span> rotation, scale, projection</div>
+      <div class="card-body">
+        Every transform in 3D (move, rotate, scale) is a matrix multiplication. The 4×4 homogeneous matrix is the workhorse of all realtime graphics.
+        <div class="formula">
+          <span class="label">Translation matrix (move by dx, dy, dz):</span>
+          [1  0  0  dx]
+          [0  1  0  dy]
+          [0  0  1  dz]
+          [0  0  0   1]
+        </div>
+        <div class="formula">
+          <span class="label">Compose transforms by multiplying matrices:</span>
+          M_final = M_projection × M_view × M_model
+        </div>
+        Matrix multiplication is NOT commutative: A×B ≠ B×A. Order always matters in 3D.
+      </div>
+    </div>
+
+    <div class="card slate">
+      <div class="card-title">Dot Product — The Angle Test</div>
+      <div class="card-where"><span class="tag slate">3D</span> lighting, culling, normals</div>
+      <div class="card-body">
+        <div class="big-formula">a · b = |a| |b| cos θ</div>
+        <div class="formula">
+          <span class="label">Lighting (Lambertian): how much light hits a surface?</span>
+          intensity = max(0, dot(normal, light_dir))
+          
+          → normal · light = 1.0 → fully lit (face-on)
+          → normal · light = 0.0 → grazing angle
+          → normal · light < 0   → back face (cull it)
+        </div>
+        <div class="codeblock"><span class="type">float</span> <span class="fn">light</span>(<span class="type">Vec3</span> N, <span class="type">Vec3</span> L) {
+  <span class="cmt">// N and L must be unit vectors</span>
+  <span class="type">float</span> d = <span class="fn">dot</span>(N, L);
+  <span class="kw">return</span> d <span class="op">></span> <span class="num">0</span> ? d : <span class="num">0.0f</span>;
+}</div>
+      </div>
+    </div>
+
+    <div class="card sage">
+      <div class="card-title">Cross Product — The Normal Maker</div>
+      <div class="card-where"><span class="tag sage">3D</span> surface normals, torque, area</div>
+      <div class="card-body">
+        The cross product of two vectors gives a third vector perpendicular to both — this is how surface normals are computed from triangle vertices.
+        <div class="formula">
+          <span class="label">a × b = (formula from 3×3 determinant):</span>
+          x = ay×bz − az×by
+          y = az×bx − ax×bz
+          z = ax×by − ay×bx
+        </div>
+        <div class="formula">
+          <span class="label">Area of parallelogram / winding order test:</span>
+          |a × b| = |a| |b| sin θ
+          sign of z-component → clockwise vs counterclockwise
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-wide">
+      <div class="card-title">Quaternions — Rotation Without Gimbal Lock</div>
+      <div class="card-where"><span class="tag gold">3D</span> animations, cameras, rotations</div>
+      <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div>
+          Euler angles (roll, pitch, yaw) suffer from gimbal lock — a situation where two axes align and you lose a degree of freedom. Blender, game engines, and animation systems use quaternions to avoid this.
+          <div class="formula">
+            <span class="label">A quaternion q = w + xi + yj + zk</span>
+            i² = j² = k² = ijk = −1
+            |q| = √(w²+x²+y²+z²) = 1  (unit quat)
+          </div>
+          To rotate vector v by quaternion q:<br>
+          v' = q × v × q⁻¹
+        </div>
+        <div>
+          <div class="formula">
+            <span class="label">Axis-angle → quaternion (rotate θ around axis n̂):</span>
+            w = cos(θ/2)
+            x = nx × sin(θ/2)
+            y = ny × sin(θ/2)
+            z = nz × sin(θ/2)
+          </div>
+          <div class="formula">
+            <span class="label">SLERP — smooth interpolation between rotations:</span>
+            slerp(q1, q2, t) = q1(q1⁻¹q2)^t
+            Used in every keyframe animation system.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CHAPTER 6: DISCRETE MATH -->
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter">
+  <div class="chapter-label">Chapter VI</div>
+  <div class="chapter-title">Discrete <span>Mathematics</span></div>
+  <p class="chapter-intro">Discrete math is the language of algorithms. Sets, graphs, combinatorics, and recursion — these are the structures your data lives in and the tools you use to reason about correctness.</p>
+
+  <div class="topic-grid">
+
+    <div class="card">
+      <div class="card-title">Set Theory & Relations</div>
+      <div class="card-where"><span class="tag">Algorithms</span> hash sets, databases, logic</div>
+      <div class="card-body">
+        <div class="formula">
+          <span class="label">Operations:</span>
+          A ∪ B  = union (elements in A or B or both)
+          A ∩ B  = intersection (elements in both)
+          A \ B  = difference (in A, not in B)
+          A ⊆ B  = A is a subset of B
+          |A|    = cardinality (number of elements)
+        </div>
+        Hash sets, maps, and databases are built on set theory. SQL JOIN is set intersection. UNION query is set union.
+        <div class="formula">
+          <span class="label">Inclusion-exclusion (overlapping sets):</span>
+          |A ∪ B| = |A| + |B| − |A ∩ B|
+        </div>
+      </div>
+    </div>
+
+    <div class="card rust">
+      <div class="card-title">Graph Theory</div>
+      <div class="card-where"><span class="tag rust">Algorithms</span> BFS, DFS, Dijkstra, trees</div>
+      <div class="card-body">
+        A graph G = (V, E) — vertices (nodes) and edges. Most real-world problems map to graphs: networks, dependencies, pathfinding, state machines.
+        <div class="formula">
+          <span class="label">Key properties:</span>
+          Degree of vertex v = number of edges at v
+          Tree = connected graph with |E| = |V| − 1, no cycles
+          DAG = Directed Acyclic Graph (build systems, Git)
+          Bipartite = vertices split into 2 sets, edges only between sets
+        </div>
+        <div class="aside">
+          <strong>Euler's formula</strong> for planar graphs: V − E + F = 2<br>
+          where F = number of faces (including outer face).
+        </div>
+      </div>
+    </div>
+
+    <div class="card slate">
+      <div class="card-title">Recursion & Recurrences</div>
+      <div class="card-where"><span class="tag slate">Algorithms</span> divide & conquer, trees</div>
+      <div class="card-body">
+        Recursive algorithms have mathematical recurrence relations that define their complexity.
+        <div class="formula">
+          <span class="label">Merge sort recurrence:</span>
+          T(n) = 2T(n/2) + O(n)  →  solves to O(n log n)
+        </div>
+        <div class="formula">
+          <span class="label">Master Theorem — solving T(n) = aT(n/b) + f(n):</span>
+          Case 1: f(n) = O(n^(log_b a − ε)) → T = O(n^(log_b a))
+          Case 2: f(n) = Θ(n^(log_b a))     → T = O(n^(log_b a) log n)
+          Case 3: f(n) = Ω(n^(log_b a + ε)) → T = O(f(n))
+        </div>
+      </div>
+    </div>
+
+    <div class="card sage">
+      <div class="card-title">Combinatorics</div>
+      <div class="card-where"><span class="tag sage">Algorithms</span> permutations, probability, hashing</div>
+      <div class="card-body">
+        <div class="formula">
+          <span class="label">Counting arrangements — order matters (permutations):</span>
+          P(n,k) = n! / (n−k)!   ← k items from n, ordered
+        </div>
+        <div class="formula">
+          <span class="label">Counting selections — order doesn't matter (combinations):</span>
+          C(n,k) = n! / (k!(n−k)!)   ← "n choose k"
+        </div>
+        <div class="formula">
+          <span class="label">Birthday paradox (collision probability):</span>
+          With 23 people: P(shared birthday) > 50%
+          → hash collision chance is higher than intuition suggests
+          → this is why hash tables need good collision handling
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CHAPTER 7: PROBABILITY & STATS -->
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter">
+  <div class="chapter-label">Chapter VII</div>
+  <div class="chapter-title">Probability, <span>Statistics</span> & ML Math</div>
+  <p class="chapter-intro">For your machine learning and F1 prediction work — this is the foundation. Every model is applied probability theory. Every loss function is a statistical concept.</p>
+
+  <div class="topic-grid">
+
+    <div class="card">
+      <div class="card-title">Probability Fundamentals</div>
+      <div class="card-where"><span class="tag gold">ML</span> Bayes, distributions, prediction</div>
+      <div class="card-body">
+        <div class="formula">
+          <span class="label">Bayes' theorem — update beliefs with evidence:</span>
+          P(A|B) = P(B|A) × P(A) / P(B)
+
+          P(A)   = prior probability (before evidence)
+          P(B|A) = likelihood (how probable is the evidence if A?)
+          P(A|B) = posterior (updated belief)
+        </div>
+        <div class="formula">
+          <span class="label">Law of Total Probability:</span>
+          P(B) = Σ P(B|Aᵢ) × P(Aᵢ)
+        </div>
+        Every naive Bayes classifier, every spam filter, every F1 outcome predictor — Bayes all the way down.
+      </div>
+    </div>
+
+    <div class="card rust">
+      <div class="card-title">Distributions</div>
+      <div class="card-where"><span class="tag rust">ML</span> modelling randomness</div>
+      <div class="card-body">
+        <table class="math-table">
+          <tr><th>Distribution</th><th>Use case</th></tr>
+          <tr><td>Normal (Gaussian)</td><td>Noise, measurement errors, natural variation</td></tr>
+          <tr><td>Bernoulli</td><td>Single coin flip, binary outcome</td></tr>
+          <tr><td>Binomial</td><td>N coin flips, win/loss counts</td></tr>
+          <tr><td>Poisson</td><td>Events per unit time (pit stops/race)</td></tr>
+          <tr><td>Uniform</td><td>Random sampling, initialising weights</td></tr>
+          <tr><td>Exponential</td><td>Time between events, survival analysis</td></tr>
+        </table>
+        <div class="formula">
+          <span class="label">Normal distribution PDF:</span>
+          f(x) = (1/σ√2π) × e^(−(x−μ)²/2σ²)
+          μ = mean, σ = standard deviation
+        </div>
+      </div>
+    </div>
+
+    <div class="card slate">
+      <div class="card-title">Linear Regression</div>
+      <div class="card-where"><span class="tag slate">ML</span> prediction, curve fitting</div>
+      <div class="card-body">
+        The simplest model: fit a line through data to predict future values.
+        <div class="big-formula">ŷ = w₁x + w₀</div>
+        <div class="formula">
+          <span class="label">Least squares — minimise sum of squared errors:</span>
+          L(w) = Σ (yᵢ − ŷᵢ)²
+          
+          Optimal w₁ = Σ(xᵢ−x̄)(yᵢ−ȳ) / Σ(xᵢ−x̄)²
+          Optimal w₀ = ȳ − w₁x̄
+        </div>
+        <div class="aside">
+          <strong>Gradient descent</strong> (how neural networks learn): move w in the direction of −∇L. 
+          The gradient ∇L is just the vector of partial derivatives — calculus applied to optimisation.
+        </div>
+      </div>
+    </div>
+
+    <div class="card sage">
+      <div class="card-title">Information Theory</div>
+      <div class="card-where"><span class="tag sage">ML</span> compression, decision trees, entropy</div>
+      <div class="card-body">
+        <div class="formula">
+          <span class="label">Entropy — measure of uncertainty/information:</span>
+          H(X) = −Σ P(xᵢ) log₂ P(xᵢ)
+          
+          H = 0 bits → perfectly predictable (certain)
+          H = 1 bit  → fair coin flip
+          H = high   → high uncertainty, more info needed
+        </div>
+        <div class="formula">
+          <span class="label">Cross-entropy loss (used to train classifiers):</span>
+          L = −Σ yᵢ × log(ŷᵢ)
+        </div>
+        Decision trees split on the feature that reduces entropy the most (information gain).
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CHAPTER 8: CALCULUS ESSENTIALS -->
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter">
+  <div class="chapter-label">Chapter VIII</div>
+  <div class="chapter-title">Calculus <span>Essentials</span> for Programmers</div>
+  <p class="chapter-intro">You don't need to solve integrals by hand. You need to understand what a derivative means and why gradient descent works. These concepts are the engine of modern ML.</p>
+
+  <div class="topic-grid">
+
+    <div class="card">
+      <div class="card-title">Derivatives — The Rate of Change</div>
+      <div class="card-where"><span class="tag gold">ML</span> gradient descent, backprop</div>
+      <div class="card-body">
+        <div class="big-formula">f'(x) = lim[h→0] (f(x+h) − f(x)) / h</div>
+        <div class="formula">
+          <span class="label">Common derivatives to know:</span>
+          d/dx [xⁿ]    = n·xⁿ⁻¹       (power rule)
+          d/dx [eˣ]    = eˣ             (exponential)
+          d/dx [ln x]  = 1/x            (natural log)
+          d/dx [sin x] = cos x
+          d/dx [f(g(x))] = f'(g(x))·g'(x)   (chain rule)
+        </div>
+        The chain rule is literally how backpropagation in neural networks is derived — it's the rule for differentiating through nested functions.
+      </div>
+    </div>
+
+    <div class="card rust">
+      <div class="card-title">Gradient & Gradient Descent</div>
+      <div class="card-where"><span class="tag rust">ML</span> training neural networks</div>
+      <div class="card-body">
+        The gradient ∇f is the vector of all partial derivatives. It points in the direction of steepest ascent. Move in the opposite direction to minimise.
+        <div class="formula">
+          <span class="label">Gradient descent update rule:</span>
+          w = w − α × ∇L(w)
+          
+          w = weights, α = learning rate, L = loss function
+        </div>
+        <div class="codeblock"><span class="cmt"># In Python — one gradient descent step</span>
+<span class="kw">for</span> param <span class="kw">in</span> model.parameters():
+    param -= learning_rate * param.grad
+    <span class="cmt"># param.grad is ∂L/∂param</span></div>
+        <div class="aside">Learning rate α too large → overshoot, diverge. Too small → slow, might get stuck in local minima.</div>
+      </div>
+    </div>
+
+    <div class="card slate">
+      <div class="card-title">Integrals & Area Under Curve</div>
+      <div class="card-where"><span class="tag slate">3D</span> <span class="tag slate">ML</span> rendering, ROC curves</div>
+      <div class="card-body">
+        <div class="big-formula">∫ f(x) dx = area under f(x)</div>
+        In 3D rendering — integrating the rendering equation over all light directions gives you the pixel colour. In ML — AUC (area under ROC curve) measures classifier quality.
+        <div class="formula">
+          <span class="label">Fundamental theorem of calculus:</span>
+          ∫[a→b] f(x) dx = F(b) − F(a)
+          where F'(x) = f(x)
+        </div>
+        <div class="formula">
+          <span class="label">Monte Carlo integration (how path tracers work):</span>
+          ∫ f(x) dx ≈ (1/N) Σ f(xᵢ)
+          Sample random points, average the values.
+          More samples → more accurate result.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <div style="font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:var(--ink);margin-bottom:8px;">
+    "Mathematics is the language in which God has written the universe."
+  </div>
+  — Galileo Galilei · and also, the language in which your computer has written everything else.
+</footer>
+
+</body>
+</html>!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Mathematics of Code</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=JetBrains+Mono:wght@300;400;600&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+
+:root {
+  --ink:    #1a1a2e;
+  --paper:  #f5f0e8;
+  --cream:  #ede8dc;
+  --gold:   #c9a84c;
+  --rust:   #b5451b;
+  --slate:  #3d5a73;
+  --sage:   #4a6741;
+  --muted:  #7a7060;
+  --rule:   #c8bfa8;
+  --code-bg:#1e1e2e;
+  --code-fg:#cdd6f4;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Crimson Pro', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.75;
+}
+
+/* ── PAPER TEXTURE ── */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(180,170,150,0.12) 27px, rgba(180,170,150,0.12) 28px),
+    repeating-linear-gradient(90deg, transparent, transparent 27px, rgba(180,170,150,0.05) 27px, rgba(180,170,150,0.05) 28px);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ── HEADER ── */
+header {
+  position: relative;
+  z-index:1;
+  border-bottom: 3px double var(--rule);
+  padding: 60px 60px 48px;
+  background: var(--cream);
+}
+
+.header-ornament {
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 6px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(42px, 7vw, 86px);
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  color: var(--ink);
+}
+h1 em {
+  font-style: italic;
+  color: var(--rust);
+}
+
+.header-sub {
+  text-align: center;
+  margin-top: 16px;
+  font-style: italic;
+  color: var(--muted);
+  font-size: 16px;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.rule-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 28px;
+}
+.rule-row hr { flex:1; border:none; border-top:1px solid var(--rule); }
+.rule-row span { color: var(--gold); font-size: 18px; }
+
+/* ── MAIN ── */
+main {
+  position: relative;
+  z-index:1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 50px 40px;
+}
+
+/* ── CHAPTER ── */
+.chapter {
+  margin-bottom: 72px;
+  break-inside: avoid;
+}
+
+.chapter-label {
+  font-size: 11px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+
+.chapter-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--ink);
+  border-bottom: 2px solid var(--rule);
+  padding-bottom: 10px;
+  margin-bottom: 28px;
+}
+.chapter-title span { color: var(--rust); }
+
+.chapter-intro {
+  font-size: 16px;
+  color: var(--muted);
+  font-style: italic;
+  margin-bottom: 28px;
+  max-width: 700px;
+}
+
+/* ── TOPIC GRID ── */
+.topic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* ── TOPIC CARD ── */
+.card {
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-top: 3px solid var(--gold);
+  border-radius: 2px;
+  padding: 22px 24px;
+  box-shadow: 2px 3px 12px rgba(0,0,0,0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 6px 20px rgba(0,0,0,0.1);
+}
+.card.rust  { border-top-color: var(--rust); }
+.card.slate { border-top-color: var(--slate); }
+.card.sage  { border-top-color: var(--sage); }
+
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 19px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: var(--ink);
+}
+
+.card-where {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+.card-body {
+  font-size: 14.5px;
+  color: #3a3530;
+  line-height: 1.75;
+}
+
+/* ── MATH FORMULA BOX ── */
+.formula {
+  background: var(--cream);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 12px 16px;
+  margin: 14px 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--slate);
+  line-height: 1.8;
+}
+.formula .label {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* ── CODE BLOCK ── */
+.codeblock {
+  background: var(--code-bg);
+  border-radius: 4px;
+  padding: 16px 20px;
+  margin: 14px 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--code-fg);
+  overflow-x: auto;
+}
+.cb-label {
+  font-family: 'Crimson Pro', serif;
+  font-style: italic;
+  font-size: 11px;
+  color: #585b70;
+  margin-bottom: 8px;
+  display: block;
+}
+.kw  { color:#cba6f7; }
+.fn  { color:#89b4fa; }
+.num { color:#fab387; }
+.str { color:#a6e3a1; }
+.cmt { color:#585b70; font-style:italic; }
+.op  { color:#89dceb; }
+.type{ color:#f9e2af; }
+
+/* ── WIDE CARD ── */
+.card-wide {
+  grid-column: 1 / -1;
+}
+
+/* ── TABLE ── */
+.math-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  margin-top: 12px;
+}
+.math-table th {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  padding: 8px 14px;
+  text-align: left;
+  font-size: 13px;
+}
+.math-table td {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+.math-table tr:nth-child(even) td { background: var(--cream); }
+.math-table code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  background: #e8e2d8;
+  padding: 1px 5px;
+  border-radius: 2px;
+  color: var(--rust);
+}
+
+/* ── ASIDE QUOTE ── */
+.aside {
+  border-left: 3px solid var(--gold);
+  padding: 16px 20px;
+  margin: 20px 0;
+  background: var(--cream);
+  font-style: italic;
+  color: var(--muted);
+  font-size: 15px;
+}
+.aside strong { color: var(--ink); font-style: normal; }
+
+/* ── VISUAL DIAGRAM ── */
+.diagram {
+  background: var(--cream);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 20px;
+  margin: 14px 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--ink);
+  line-height: 1.7;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* ── BIG FORMULA (inline display) ── */
+.big-formula {
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  padding: 20px;
+  color: var(--slate);
+  font-style: italic;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  margin: 16px 0;
+}
+.big-formula sub, .big-formula sup { font-size: 14px; }
+
+/* ── FOOTER ── */
+footer {
+  position:relative;
+  z-index:1;
+  border-top: 3px double var(--rule);
+  padding: 30px 60px;
+  text-align: center;
+  color: var(--muted);
+  font-style: italic;
+  font-size: 14px;
+  background: var(--cream);
+}
+
+/* ── PILL TAG ── */
+.tag {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 2px;
+  margin-right: 4px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.tag.rust  { background: var(--rust); }
+.tag.slate { background: var(--slate); }
+.tag.sage  { background: var(--sage); }
+.tag.gold  { background: var(--gold); color: var(--ink); }
+
+/* animations */
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(20px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.chapter { animation: fadeIn 0.5s ease both; }
+.chapter:nth-child(1){animation-delay:.05s}
+.chapter:nth-child(2){animation-delay:.10s}
+.chapter:nth-child(3){animation-delay:.15s}
+.chapter:nth-child(4){animation-delay:.20s}
+.chapter:nth-child(5){animation-delay:.25s}
+.chapter:nth-child(6){animation-delay:.30s}
+.chapter:nth-child(7){animation-delay:.35s}
+
+@media(max-width:600px){
+  header{padding:40px 24px 32px;}
+  main{padding:30px 20px;}
+  .chapter-title{font-size:26px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-ornament">— A Programmer's Mathematical Companion —</div>
+  <h1>The <em>Mathematics</em><br>of Code</h1>
+  <p class="header-sub">
+    Every algorithm has a mathematical soul. Here is the maths you actually use — 
+    from the bit shifts in your C loops to the linear algebra in 3D rendering.
+  </p>
+  <div class="rule-row"><hr><span>✦</span><hr></div>
+</header>
+
+<main>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CHAPTER 1: NUMBER SYSTEMS -->
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter">
+  <div class="chapter-label">Chapter I</div>
+  <div class="chapter-title">Number <span>Systems</span> & Binary Arithmetic</div>
+  <p class="chapter-intro">The machine speaks in binary. Everything else — decimal, hex, octal — is a human convenience layered on top. Understanding this is prerequisite to understanding memory.</p>
+
+  <div class="topic-grid">
+
+    <div class="card">
+      <div class="card-title">Positional Number Systems</div>
+      <div class="card-where"><span class="tag">C</span> integer literals, bit ops</div>
+      <div class="card-body">
+        Every number system is just base-N counting. Each digit position is a power of the base.
+        <div class="formula">
+          <span class="label">Decimal (base 10)</span>
+          1024 = 1×10³ + 0×10² + 2×10¹ + 4×10⁰
+        </div>
+        <div class="formula">
+          <span class="label">Binary (base 2) — what the CPU sees</span>
+          1010 = 1×2³ + 0×2² + 1×2¹ + 0×2⁰ = 10
+        </div>
+        <div class="formula">
+          <span class="label">Hexadecimal (base 16) — compact binary notation</span>
+          0xFF = 15×16¹ + 15×16⁰ = 255
+          0xDEAD = 57005 decimal
+        </div>
+        In C, prefix <code style="font-family:monospace;color:var(--rust)">0b</code> = binary, <code style="font-family:monospace;color:var(--rust)">0x</code> = hex, <code style="font-family:monospace;color:var(--rust)">0</code> = octal.
+      </div>
+    </div>
+
+    <div class="card rust">
+      <div class="card-title">Two's Complement</div>
+      <div class="card-where"><span class="tag rust">C</span> signed integers, overflow</div>
+      <div class="card-body">
+        How negative numbers are stored. Not "add a minus sign" — invert all bits, add 1.
+        <div class="formula">
+          <span class="label">8-bit example: represent −5</span>
+          +5  =  0000 0101
+          flip=  1111 1010
+          +1  =  1111 1011  ← this is −5 in two's complement
+        </div>
+        Why this matters: <code style="font-family:monospace;color:var(--rust)">int</code> wraps on overflow (UB in C!). 
+        <code style="font-family:monospace;color:var(--rust)">INT_MAX + 1</code> doesn't give you a big number, it gives you <code style="font-family:monospace;color:var(--rust)">INT_MIN</code>. 
+        The MSB (leftmost bit) is the sign bit.
+        <div class="aside">
+          <strong>Range formula:</strong> for N-bit signed: −2<sup>N−1</sup> to 2<sup>N−1</sup>−1. 
+          For 32-bit int: −2,147,483,648 to 2,147,483,647.
+        </div>
+      </div>
+    </div>
+
+    <div class="card slate">
+      <div class="card-title">Bitwise Operations</div>
+      <div class="card-where"><span class="tag slate">C</span> flags, masks, performance tricks</div>
+      <div class="card-body">
+        <table class="math-table">
+          <tr><th>Operation</th><th>Symbol</th><th>Use Case</th></tr>
+          <tr><td>AND</td><td><code>&</code></td><td>Masking — isolate bits</td></tr>
+          <tr><td>OR</td><td><code>|</code></td><td>Setting bits</td></tr>
+          <tr><td>XOR</td><td><code>^</code></td><td>Toggle bits, swap values</td></tr>
+          <tr><td>NOT</td><td><code>~</code></td><td>Invert all bits</td></tr>
+          <tr><td>Left shift</td><td><code>&lt;&lt;</code></td><td>Multiply by 2ⁿ</td></tr>
+          <tr><td>Right shift</td><td><code>&gt;&gt;</code></td><td>Divide by 2ⁿ (integers)</td></tr>
+        </table>
+        <div class="codeblock">
+<span class="cmt">// x << n  ≡  x × 2ⁿ  (fast multiply)</span>
+<span class="num">16</span> <span class="op">&lt;&lt;</span> <span class="num">3</span>   <span class="cmt">// = 16 × 8 = 128</span>
+
+<span class="cmt">// Check if bit N is set</span>
+<span class="kw">if</span> (flags <span class="op">&</span> (<span class="num">1</span> <span class="op">&lt;&lt;</span> N)) { ... }
+
+<span class="cmt">// XOR swap (no temp variable)</span>
+a <span class="op">^=</span> b; b <span class="op">^=</span> a; a <span class="op">^=</span> b;</div>
+      </div>
+    </div>
+
+    <div class="card sage">
+      <div class="card-title">IEEE 754 Floating Point</div>
+      <div class="card-where"><span class="tag sage">C</span> float, double precision</div>
+      <div class="card-body">
+        <code style="font-family:monospace;color:var(--rust)">float</code> is not a real number. It is an approximation. The 32-bit layout:
+        <div class="diagram">┌─┬────────┬───────────────────────┐
+│S│ Exp(8) │   Mantissa (23 bits)  │
+└─┴────────┴───────────────────────┘
+ 1    8              23
+
+value = (−1)^S × 1.mantissa × 2^(exp−127)</div>
+        This is why <code style="font-family:monospace;color:var(--rust)">0.1 + 0.2 ≠ 0.3</code> in any language. 
+        Never compare floats with <code style="font-family:monospace;color:var(--rust)">==</code>. Use epsilon comparison:
+        <div class="codeblock"><span class="kw">#define</span> EPSILON <span class="num">1e-9</span>
+<span class="fn">fabs</span>(a - b) <span class="op">&lt;</span> EPSILON  <span class="cmt">// "equal enough"</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CHAPTER 2: MODULAR / INTEGER MATH -->
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter">
+  <div class="chapter-label">Chapter II</div>
+  <div class="chapter-title">Modular <span>Arithmetic</span> & Integer Math</div>
+  <p class="chapter-intro">The modulo operation is one of the most used tools in programming — hashing, circular buffers, day-of-week, cryptography. Understand it deeply.</p>
+
+  <div class="topic-grid">
+
+    <div class="card">
+      <div class="card-title">Modulo — The Clock Model</div>
+      <div class="card-where"><span class="tag">C</span> %, loops, hashing, wrapping</div>
+      <div class="card-body">
+        Think of modulo as a clock. After 12 comes 1, not 13. After N comes 0.
+        <div class="big-formula">a mod n = remainder when a ÷ n</div>
+        <div class="codeblock"><span class="cmt">// Circular buffer — wrap index</span>
+index = (index + <span class="num">1</span>) <span class="op">%</span> BUFFER_SIZE;
+
+<span class="cmt">// Even/odd check</span>
+<span class="kw">if</span> (n <span class="op">%</span> <span class="num">2</span> <span class="op">==</span> <span class="num">0</span>) { <span class="cmt">/* even */</span> }
+
+<span class="cmt">// Hash table bucket</span>
+bucket = hash(key) <span class="op">%</span> TABLE_SIZE;
+
+<span class="cmt">// Day of week (0=Sun) after N days</span>
+day = (current_day + N) <span class="op">%</span> <span class="num">7</span>;</div>
+        <div class="aside"><strong>Warning:</strong> in C, <code style="font-family:monospace">%</code> on negative numbers can give negative results. Use <code style="font-family:monospace">((a % n) + n) % n</code> for always-positive modulo.</div>
+      </div>
+    </div>
+
+    <div class="card rust">
+      <div class="card-title">Integer Division & Floor/Ceil</div>
+      <div class="card-where"><span class="tag rust">C</span> pagination, chunking, alignment</div>
+      <div class="card-body">
+        Integer division in C <em>truncates toward zero</em>. This is not the same as floor for negatives.
+        <div class="formula">
+          <span class="label">Ceiling division (pages needed to hold N items in groups of K):</span>
+          ceil(N / K) = (N + K − 1) / K   ← integer, no float needed
+        </div>
+        <div class="codeblock"><span class="cmt">// How many 4-byte words to store N bytes?</span>
+<span class="type">int</span> words = (N + <span class="num">3</span>) / <span class="num">4</span>;
+
+<span class="cmt">// Align address to 16-byte boundary</span>
+<span class="type">size_t</span> aligned = (addr + <span class="num">15</span>) <span class="op">&</span> ~<span class="num">15</span>;
+<span class="cmt">// same as: (addr + 15) / 16 * 16</span>
+
+<span class="cmt">// Number of pages for N bytes (page=4096)</span>
+<span class="type">int</span> pages = (N + <span class="num">4095</span>) / <span class="num">4096</span>;</div>
+      </div>
+    </div>
+
+    <div class="card slate">
+      <div class="card-title">GCD, LCM & Prime Tests</div>
+      <div class="card-where"><span class="tag slate">Algorithms</span> number theory basics</div>
+      <div class="card-body">
+        <div class="formula">
+          <span class="label">Euclidean algorithm — GCD(a, b)</span>
+          GCD(48, 18):
+            48 = 2 × 18 + 12
+            18 = 1 × 12 + 6
+            12 = 2 × 6  + 0  → GCD = 6
+        </div>
+        <div class="codeblock"><span class="type">int</span> <span class="fn">gcd</span>(<span class="type">int</span> a, <span class="type">int</span> b) {
+  <span class="kw">return</span> b <span class="op">==</span> <span class="num">0</span> ? a : <span class="fn">gcd</span>(b, a <span class="op">%</span> b);
+}
+<span class="cmt">// LCM(a,b) = a × b / GCD(a,b)</span>
+
+<span class="cmt">// Primality: trial division O(√n)</span>
+<span class="kw">for</span> (<span class="type">int</span> i=<span class="num">2</span>; i*i &lt;= n; i++)
+  <span class="kw">if</span> (n <span class="op">%</span> i <span class="op">==</span> <span class="num">0</span>) <span class="kw">return</span> <span class="num">0</span>; <span class="cmt">// composite</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- CHAPTER 3: LOGARITHMS & EXPONENTS -->
+<!-- ══════════════════════════════════════════ -->
+<div class="chapter">
+  <div class="chapter-label">Chapter III</div>
+  <div class="chapter-title">Logarithms, <span>Exponents</span> & Big-O</div>
+  <p class="chapter-intro">Big-O is just applied logarithms. You cannot reason about algorithm performance without understanding how log and exponential functions grow. This is the mathematics of scalability.</p>
+
+  <div class="topic-grid">
+
+    <div class="card">
+      <div class="card-title">Logarithms — The Inverse of Exponentiation</div>
+      <div class="card-where"><span class="tag">Algorithms</span> complexity, binary search, trees</div>
+      <div class="card-body">
+        <div class="big-formula">log<sub>b</sub>(x) = y  ↔  b<sup>y</sup> = x</div>
+        <div class="formula">
+          <span class="label">log₂ answers: "how many times can I halve x before reaching 1?"</span>
+          log₂(1024) = 10   → binary search on 1024 items: 10 comparisons
+          log₂(1M)   ≈ 20   → only 20 comparisons on a million items!
+        </div>
+        <div class="aside">
+          <strong>The programmer's log rules:</strong><br>
+          log(a × b) = log(a) + log(b)<br>
+          log(a / b) = log(a) − log(b)<br>
+          log(aⁿ)    = n × log(a)<br>
+          log<sub>b</sub>(x) = log(x) / log(b)  ← change of base
+        </div>
+      </div>
+    </div>
+
+    <div class="card rust">
+      <div class="card-title">Big-O Complexity Classes</div>
+      <div class="card-where"><span class="tag rust">Algorithms</span> algorithm analysis, interviews</div>
+      <div class="card-body">
+        <table class="math-table">
+          <tr><th>Notation</th><th>Name</th><th>Example</th></tr>
+          <tr><td>O(1)</td><td>Constant</td><td>Array
