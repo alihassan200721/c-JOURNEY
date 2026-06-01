@@ -27,7 +27,6 @@
 #include <stdio.h>
 #include <ctype.h>
 
-
 int main() {
     char ch;
     printf("Enter: ");
@@ -38,7 +37,6 @@ int main() {
     } else {
         printf("%c is not a digit. \n", ch);
     }
-    
 
     return 0;
 }
