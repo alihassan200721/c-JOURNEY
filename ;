@@ -1,0 +1,26 @@
+//write a function to calulate the numeber of odd numbers in an arrary;
+
+
+#include <stdio.h>
+
+int odd(int *arr, int n);
+
+int main() {
+    int arr[4] = {1,2,3,4,4};
+    printf("Odd is %d\n", odd(aar, 4));
+
+    return 0;
+}
+
+
+int odd(int *arr, int n) {
+    int count = 0;
+    for (int i = 0; i < n; i++) {
+        if(i %2 != 0) {
+            count += 1;
+        } else{
+            continue;
+        }
+    }
+    return count;
+}

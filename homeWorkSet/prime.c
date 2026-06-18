@@ -1,26 +1,25 @@
+//prime number checker
+
 #include <stdio.h>
 
 int main() {
-    int n, i, isPrime = 1;
+    int n;
+    int isPrime = 1;
 
-    printf("Enter a number: ");
+    printf("Enter number: ");
     scanf("%d", &n);
 
-    if (n <= 1) {
-        isPrime = 0;
-    } else {
-        for (i = 2; i <= n / 2; i++) {
-            if (n % i == 0) {
-                isPrime = 0;
-                break;
-            }
+    for (int i = 2; i * i<= n; i++) {
+        if (n % i == 0) {
+            isPrime = 0;
         }
     }
+    if(isPrime) {
+        printf("The number is prime %d \n", n);
+    } else {
+        printf("The number is not prime %d \n", n);
+    }
 
-    if (isPrime)
-        printf("%d is a prime number.\n", n);
-    else
-        printf("%d is not a prime number.\n", n);
 
     return 0;
 }
